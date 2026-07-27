@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import LayoutShell from "@/components/layout/LayoutShell";
 import { SITE } from "@contador/shared";
 import "./globals.css";
@@ -51,6 +52,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <LayoutShell>{children}</LayoutShell>
+        <Analytics />
       </body>
     </html>
   );
