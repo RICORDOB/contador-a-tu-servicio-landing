@@ -33,7 +33,7 @@ export default function CalendarioDianForm() {
     <div className="grid gap-8 lg:grid-cols-2">
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-border bg-white p-6 shadow-sm"
+        className="card-modern card-hover p-7"
       >
         <label className="block text-sm font-medium text-navy">
           Últimos 2 dígitos de tu NIT o cédula
@@ -50,18 +50,18 @@ export default function CalendarioDianForm() {
           placeholder="00"
           value={digitos}
           onChange={(e) => setDigitos(e.target.value.replace(/\D/g, "").slice(0, 2))}
-          className="mt-3 w-full rounded-lg border border-border px-3 py-3 text-center text-2xl font-bold tracking-widest"
+          className="mt-3 w-full rounded-xl border border-border px-3 py-3 text-center text-2xl font-bold tracking-widest outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
         />
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         <button
           type="submit"
-          className="mt-6 w-full rounded-xl bg-emerald py-3 text-sm font-semibold text-white"
+          className="btn-primary mt-6 w-full py-3 text-sm"
         >
           Consultar fecha de vencimiento
         </button>
       </form>
 
-      <div className="rounded-2xl border border-border bg-slate-50 p-6">
+      <div className="card-modern bg-slate-50 p-7">
         {result ? (
           <>
             <p className="text-sm text-slate-600">Declaración de renta — año gravable {result.anioGravable}</p>

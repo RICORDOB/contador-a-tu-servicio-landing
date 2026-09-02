@@ -39,6 +39,9 @@ async function ensureSchema({ force = false } = {}): Promise<void> {
     )
   `);
   await pool.query(`
+    ALTER TABLE appointments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pendiente'
+  `);
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS invitations (
       id TEXT PRIMARY KEY,
       token TEXT NOT NULL UNIQUE,

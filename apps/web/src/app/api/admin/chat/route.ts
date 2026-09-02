@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { requireRole } from "@/lib/admin-auth";
 import { isAllowedOrigin } from "@/lib/security";
 
 const ADK_BACKEND_URL = process.env.ADK_BACKEND_URL;
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
     }
 
-    if (!(await isAdminAuthenticated())) {
+    if (!(await requireRole("developer"))) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 

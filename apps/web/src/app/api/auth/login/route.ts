@@ -1,7 +1,22 @@
 import { NextResponse } from "next/server";
-import { signAdminToken, getAdminCookieName } from "@/lib/admin-auth";
+import {
+  signToken,
+  getCookieName,
+  type PanelRole,
+  TOKEN_TTL_SECONDS,
+} from "@/lib/admin-auth";
 import { consumeRateLimit, getClientIp } from "@/lib/rate-limit";
 import { safeEqual, isAllowedOrigin, isDefaultAdminSecret } from "@/lib/security";
+
+const CREDS: Record<PanelRole, { user?: string; pass?: string }> = {
+  developer: { user: process.env.ADMIN_USER, pass: process.env.ADMIN_PASS },
+  contadora: { user: process.env.CONTADORA_USER, pass: process.env.CONTADORA_PASS },
+};
+
+const ROLE_LABEL: Record<PanelRole, string> = {
+  developer: "desarrollador",
+  contadora: "contadora",
+};
 
 export async function POST(request: Request) {
   try {
@@ -17,11 +32,18 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { username, password } = body as { username?: string; password?: string };
+    const { role, username, password } = body as {
+      role?: string;
+      username?: string;
+      password?: string;
+    };
 
-    const rateKey = `${getClientIp(request)}|${username ?? ""}`;
+    if (role !== "developer" && role !== "contadora") {
+      return NextResponse.json({ error: "Rol inválido" }, { status: 400 });
+    }
+
+    const rateKey = `${getClientIp(request)}|${role}|${username ?? ""}`;
     const rate = await consumeRateLimit(rateKey);
-
     if (rate.limited) {
       return NextResponse.json(
         { error: "Demasiados intentos. Intenta más tarde." },
@@ -32,17 +54,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const expectedUser = process.env.ADMIN_USER;
-    const expectedPass = process.env.ADMIN_PASS;
+    const { user: expectedUser, pass: expectedPass } = CREDS[role as PanelRole];
 
     if (!expectedUser || !expectedPass) {
       return NextResponse.json(
-        { error: "Credenciales de administrador no configuradas" },
+        { error: `Credenciales de ${ROLE_LABEL[role as PanelRole]} no configuradas` },
         { status: 500 }
       );
     }
 
-    // Comparación a prueba de timing attacks.
     const valid =
       safeEqual(username ?? "", expectedUser) &&
       safeEqual(password ?? "", expectedPass);
@@ -54,15 +74,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const token = await signAdminToken();
-    const res = NextResponse.json({ ok: true });
+    const token = await signToken(role as PanelRole);
+    const res = NextResponse.json({ ok: true, role });
 
-    res.cookies.set(getAdminCookieName(), token, {
+    res.cookies.set(getCookieName(), token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      path: "/admin",
-      maxAge: 60 * 60 * 12,
+      path: "/",
+      maxAge: TOKEN_TTL_SECONDS,
     });
 
     return res;

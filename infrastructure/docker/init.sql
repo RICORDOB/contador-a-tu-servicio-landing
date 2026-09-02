@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   guest_phone TEXT NOT NULL,
   service_type TEXT NOT NULL DEFAULT '',
   scheduled_at TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pendiente',
   created_at TEXT NOT NULL
 );
 

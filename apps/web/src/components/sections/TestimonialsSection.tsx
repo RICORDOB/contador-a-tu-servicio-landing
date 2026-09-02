@@ -1,4 +1,5 @@
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
+import Reveal from "@/components/ui/Reveal";
 
 const testimonials = [
   {
@@ -23,37 +24,34 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonios" className="py-16 sm:py-20 bg-white">
+    <section id="testimonios" className="bg-white py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-emerald">
-            Testimonios
-          </p>
-          <h2 className="mt-2 text-3xl font-bold text-navy sm:text-4xl">
+        <Reveal className="max-w-2xl">
+          <p className="section-eyebrow">Testimonios</p>
+          <h2 className="section-title font-display">
             Lo que dicen nuestros clientes
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {testimonials.map((t) => (
-            <article
-              key={t.name}
-              className="hover-lift rounded-2xl border border-border bg-slate-50 p-6"
-            >
-              <Quote size={24} className="text-emerald/40" />
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                {t.text}
-              </p>
-              <div className="mt-6 flex items-center gap-1">
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <span key={i} className="text-emerald text-lg">
-                    ★
-                  </span>
-                ))}
-              </div>
-              <p className="mt-4 text-sm font-semibold text-navy">{t.name}</p>
-              <p className="text-xs text-slate-500">{t.role}</p>
-            </article>
+        <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          {testimonials.map((t, i) => (
+            <Reveal key={t.name} delay={i * 120}>
+              <article className="card-modern card-hover group relative h-full p-7">
+                <span className="absolute right-6 top-6 text-emerald/15 transition group-hover:text-emerald/30">
+                  <Quote size={40} />
+                </span>
+                <p className="relative text-sm leading-relaxed text-slate-700">
+                  “{t.text}”
+                </p>
+                <div className="mt-6 flex items-center gap-1">
+                  {Array.from({ length: t.rating }).map((_, s) => (
+                    <Star key={s} size={15} className="fill-gold text-gold" />
+                  ))}
+                </div>
+                <p className="font-display mt-4 font-semibold text-navy">{t.name}</p>
+                <p className="text-xs text-slate-500">{t.role}</p>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

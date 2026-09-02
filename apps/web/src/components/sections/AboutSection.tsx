@@ -1,4 +1,5 @@
 import { Award, HeartHandshake, Lock, TrendingUp, Cpu } from "lucide-react";
+import Reveal from "@/components/ui/Reveal";
 
 const values = [
   {
@@ -35,18 +36,19 @@ const values = [
 
 export default function AboutSection() {
   return (
-    <section id="nosotros" className="py-16 sm:py-20">
+    <section id="nosotros" className="py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-emerald">
-              Nosotros
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-navy sm:text-4xl">
+        <div className="grid items-start gap-14 lg:grid-cols-2">
+          <Reveal className="lg:sticky lg:top-24">
+            <p className="section-eyebrow">Nosotros</p>
+            <h2 className="section-title font-display">
               Contabilidad clara, humana y al día
             </h2>
-            <p className="mt-4 leading-relaxed text-slate-600">
-              En <strong className="font-semibold text-navy">Contador a tu Servicio</strong>{" "}
+            <p className="mt-5 leading-relaxed text-slate-600">
+              En{" "}
+              <strong className="font-semibold text-navy">
+                Contador a tu Servicio
+              </strong>{" "}
               combinamos rigor técnico con atención personalizada. Atendemos
               comerciantes, profesionales independientes y empresas de Turbo,
               Antioquia, con servicios presenciales y virtuales.
@@ -62,18 +64,23 @@ export default function AboutSection() {
               IA para hacer la contabilidad más eficiente, rápida y accesible
               para todos nuestros clientes.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {values.map((value) => (
-              <div
-                key={value.title}
-                className="hover-lift rounded-2xl border border-border bg-card p-5"
-              >
-                <value.icon size={22} className="text-emerald" />
-                <h3 className="mt-3 font-semibold text-navy">{value.title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{value.description}</p>
-              </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {values.map((value, i) => (
+              <Reveal key={value.title} delay={(i % 2) * 100}>
+                <article className="card-modern card-hover group h-full p-6">
+                  <span className="icon-tile h-12 w-12">
+                    <value.icon size={22} />
+                  </span>
+                  <h3 className="font-display mt-4 font-semibold text-navy">
+                    {value.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {value.description}
+                  </p>
+                </article>
+              </Reveal>
             ))}
           </div>
         </div>

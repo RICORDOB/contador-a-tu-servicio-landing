@@ -19,21 +19,22 @@ export const metadata: Metadata = {
 
 export default function CalendarioDianPage() {
   return (
-    <section className="px-4 py-12 sm:px-6">
+    <section className="px-4 py-14 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-5xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm font-medium text-emerald"
+          className="chip"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={13} />
           Volver al inicio
         </Link>
-        <h1 className="mt-4 text-3xl font-bold text-navy">Calendario tributario DIAN</h1>
-        <p className="mt-2 max-w-2xl text-slate-600">
+        <p className="section-eyebrow mt-6">Herramienta gratuita</p>
+        <h1 className="section-title font-display">Calendario tributario DIAN</h1>
+        <p className="section-sub max-w-2xl">
           Consulta la fecha exacta de vencimiento de tu declaración de renta
           (año gravable 2025) con los 2 últimos dígitos de tu NIT o cédula.
         </p>
-        <div className="mt-8">
+        <div className="mt-9">
           <CalendarioDianForm />
         </div>
       </div>

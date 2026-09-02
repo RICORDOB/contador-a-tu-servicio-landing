@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAdminCookieName } from "@/lib/admin-auth";
+import { getCookieName } from "@/lib/admin-auth";
 import { isAllowedOrigin } from "@/lib/security";
 
 export async function POST(request: Request) {
@@ -8,11 +8,11 @@ export async function POST(request: Request) {
   }
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(getAdminCookieName(), "", {
+  res.cookies.set(getCookieName(), "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/admin",
+    path: "/",
     maxAge: 0,
   });
   return res;

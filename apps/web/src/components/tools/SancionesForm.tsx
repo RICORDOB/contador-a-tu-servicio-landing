@@ -36,7 +36,7 @@ export default function SancionesForm() {
     <div className="grid gap-8 lg:grid-cols-2">
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-border bg-white p-6 shadow-sm"
+        className="card-modern card-hover p-7"
       >
         <div className="space-y-4">
           <div>
@@ -46,7 +46,7 @@ export default function SancionesForm() {
             <select
               value={tipoImpuesto}
               onChange={(e) => setTipoImpuesto(e.target.value as TipoImpuesto)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
             >
               {TIPOS_IMPUESTO.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -66,7 +66,7 @@ export default function SancionesForm() {
               placeholder="Ej: 50000000"
               value={baseGravable}
               onChange={(e) => setBaseGravable(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
             />
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function SancionesForm() {
               required
               value={mesesRetraso}
               onChange={(e) => setMesesRetraso(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
             />
           </div>
           <label className="flex items-center gap-2 text-sm">
@@ -88,19 +88,20 @@ export default function SancionesForm() {
               type="checkbox"
               checked={presentoExtemporaneo}
               onChange={(e) => setPresentoExtemporaneo(e.target.checked)}
+              className="accent-emerald"
             />
             Presentó extemporáneamente (reducción 50%)
           </label>
         </div>
         <button
           type="submit"
-          className="mt-6 w-full rounded-xl bg-emerald py-3 text-sm font-semibold text-white hover:bg-emerald-light"
+          className="btn-primary mt-6 w-full py-3 text-sm"
         >
           Calcular sanción estimada
         </button>
       </form>
 
-      <div className="rounded-2xl border border-border bg-slate-50 p-6">
+      <div className="card-modern bg-slate-50 p-7">
         {result ? (
           <>
             <p className="text-sm text-slate-600">Sanción estimada</p>

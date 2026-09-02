@@ -7,6 +7,7 @@ import {
   Users,
 } from "lucide-react";
 import { SERVICES } from "@contador/shared";
+import Reveal from "@/components/ui/Reveal";
 
 const iconMap = {
   calculator: Calculator,
@@ -19,40 +20,37 @@ const iconMap = {
 
 export default function ServicesSection() {
   return (
-    <section id="servicios" className="py-16 sm:py-20">
+    <section id="servicios" className="py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-emerald">
-            Servicios
-          </p>
-          <h2 className="mt-2 text-3xl font-bold text-navy sm:text-4xl">
+        <Reveal className="max-w-2xl">
+          <p className="section-eyebrow">Servicios</p>
+          <h2 className="section-title font-display">
             Soluciones contables para tu negocio
           </h2>
-          <p className="mt-4 text-slate-600">
+          <p className="section-sub">
             Desde la contabilidad diaria hasta la declaración de renta, te
             acompañamos en cada obligación tributaria en Turbo y en todo el
             país.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service) => {
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {SERVICES.map((service, i) => {
             const Icon = iconMap[service.icon as keyof typeof iconMap];
             return (
-              <article
-                key={service.id}
-                className="group hover-lift rounded-2xl border border-border bg-card p-6 transition hover:border-emerald/30 hover:shadow-lg hover:shadow-emerald/5"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy/5 text-navy transition group-hover:bg-emerald/10 group-hover:text-emerald">
-                  <Icon size={22} />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-navy">
-                  {service.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  {service.description}
-                </p>
-              </article>
+              <Reveal key={service.id} delay={(i % 3) * 90}>
+                <article className="card-modern card-hover group h-full p-6">
+                  <span className="icon-tile h-12 w-12">
+                    <Icon size={22} />
+                  </span>
+                  <h3 className="font-display mt-5 text-lg font-semibold text-navy">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    {service.description}
+                  </p>
+                </article>
+              </Reveal>
             );
           })}
         </div>

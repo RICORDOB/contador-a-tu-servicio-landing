@@ -13,10 +13,13 @@ Monorepo Turborepo con un solo workspace publicado:
 
 ## Estructura clave
 - `apps/web/src/app`: layout + secciones (Hero, Services, Automation, HowItWorks, Stats, Tools, Testimonials, About, Contact) y tools `/tools/calendario-dian` y `/tools/simulador-sanciones`.
-- `apps/web/src/components`: Navbar, Footer, LayoutShell, ChatbotWidget (flujo "agendar").
-- `apps/web/src/lib`: `admin-auth.ts`, `security.ts` (comparación timing-safe + validación de Origin/CSRF), `rate-limit.ts` (PostgreSQL `login_attempts`, fallback en memoria), `db.ts` (pool PostgreSQL vía `pg`), `storage.ts` (persistencia con fallback JSON en `data/`), `whatsapp.ts` (notificaciones vía WhatsApp Cloud API), y `shared/` (duplicado autocontenido del paquete para el deploy de Vercel).
-- `apps/web/src/app/api`: rutas para contact, agendar, chat, admin (login/chat/logout), `health` (monitoreo: DB + backend de agentes), cron de recordatorios.
-- `proxy.ts` (Next 16; reemplaza `middleware.ts`. Protegge `/admin`), `vercel.json`, `next.config.ts` (headers de seguridad).
+- **Paneles por rol**: `/admin` (developer, control total: dashboard/sistema, citas, invitaciones, recordatorios, chat) y `/contadora` (operativa: dashboard, citas operable con WhatsApp, clientes, recordatorios, chat). Logins en `/admin/login` y `/contadora/login`; el portal de clientes es `/portal` (invitación por token).
+- Auth: `lib/admin-auth.ts` firma JWT con claim `role: developer | contadora` (misma cookie `cn_token` path `/`); `proxy.ts` valida ruta→rol.
+- `apps/web/src/components`: Navbar, Footer, LayoutShell, ChatbotWidget, WhatsAppFloat (public) y `admin/` PanelShell + PanelLogin + ChatPanel (paneles).
+- `apps/web/src/lib`: `admin-auth.ts`, `security.ts`, `rate-limit.ts` (PostgreSQL `login_attempts`, fallback en memoria), `db.ts`, `storage.ts` (citas con estado `pendiente|confirmada|atendida|cancelada`), `reminders.ts` (vista previa vencimientos), `whatsapp.ts`, y `shared/`.
+- `apps/web/src/app/api`: `auth/login-logout`, `admin/*` (citas, invitaciones, recordatorios, health), `contadora/*` (citas PATCH, invitaciones, recordatorios, chat), `contact`, `appointments`, `automation/*`, `chatbot/message`, `health`.
+- `proxy.ts` (Next 16; protege `/admin` y `/contadora` con roles), `vercel.json`, `next.config.ts`.
+- **Rediseño**: `globals.css` trae utilidades modernas (`.card-modern`, `.card-hover`, `.btn-primary`, `.text-gradient`, `.glass`, `.chip`, `.icon-tile`, `.section-eyebrow/title/sub`, `.reveal`) y `components/ui/Reveal.tsx` + `CountUp.tsx`; fuente display `Plus_Jakarta_Sans` via `--font-display`.
 
 ## Convenciones
 - Components con export default; alias `@/*` → `apps/web/src/*` y `@contador/shared` → `packages/shared/src/index.ts`.
@@ -29,7 +32,7 @@ Monorepo Turborepo con un solo workspace publicado:
 
 ## Deploy a Vercel
 - Proyecto `ricardo-dev2/contador-a-tu-servicio`. Vercel CLI solo sube `apps/web` (el workspace `@contador/shared` no se publica), por eso se despliega una copia **staging** autocontenida en `/var/folders/p2/p5kgt89138n_dyk5w17fglf00000gn/T/opencode/contador-deploy/apps/web`, con `@contador/shared` duplicado en `src/lib/shared` y alias en `tsconfig.json`. Desde ahí: `npx vercel deploy --prod --yes`.
-- Env vars pendientes en Vercel: `ADMIN_USER`/`ADMIN_PASS`/`ADMIN_SECRET` (login 500 sin ellas; en producción exige `ADMIN_SECRET` no vacío), `ADK_BACKEND_URL`/`ADK_API_KEY` (chatbot 503 "en mantenimiento" sin ellas), `DATABASE_URL` (persistencia), `WHATSAPP_*` (notificaciones), `CRON_SECRET` (el cron `/api/automation/reminders` diario 9:00 UTC lo recibe como Bearer).
+- Env vars pendientes en Vercel: `ADMIN_USER`/`ADMIN_PASS`/`ADMIN_SECRET` (login developer 500 sin ellas; en producción exige `ADMIN_SECRET` no vacío), `CONTADORA_USER`/`CONTADORA_PASS` (login contadora), `ADK_BACKEND_URL`/`ADK_API_KEY` (chatbot 503 "en mantenimiento" sin ellas), `DATABASE_URL` (persistencia), `WHATSAPP_*` (notificaciones), `CRON_SECRET` (el cron `/api/automation/reminders` diario 9:00 UTC lo recibe como Bearer).
 
 ## Caveats
 - `lib/storage.ts` usa PostgreSQL (var `DATABASE_URL`) y cae a JSON en `data/` solo si no hay URL configurada. El schema (tablas `appointments`, `invitations`, `login_attempts`) se crea solo (`CREATE TABLE IF NOT EXISTS`); también está en `infrastructure/docker/init.sql`.

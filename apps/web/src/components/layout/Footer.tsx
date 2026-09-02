@@ -6,12 +6,21 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="gradient-navy text-slate-200">
+    <footer className="gradient-navy relative mt-4 text-slate-200">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent"
+      />
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <p className="text-lg font-semibold text-white">{SITE.name}</p>
-            <p className="mt-2 text-sm text-slate-300">{SITE.tagline}</p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald to-emerald-light text-xs font-bold text-white">
+                CS
+              </span>
+              <p className="text-lg font-semibold text-white">{SITE.name}</p>
+            </div>
+            <p className="mt-3 text-sm text-slate-300">{SITE.tagline}</p>
             <div className="mt-4 flex items-start gap-2 text-sm text-slate-300">
               <MapPin size={16} className="mt-0.5 shrink-0 text-gold" />
               <span>

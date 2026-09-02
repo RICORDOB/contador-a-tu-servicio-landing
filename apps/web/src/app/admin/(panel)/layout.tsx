@@ -1,15 +1,14 @@
 import { redirect } from "next/navigation";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
-import AdminShell from "@/components/admin/AdminShell";
+import { requireRole } from "@/lib/admin-auth";
+import PanelShell from "@/components/admin/PanelShell";
 
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const authed = await isAdminAuthenticated();
-
-  if (!authed) {
+  const role = await requireRole("developer");
+  if (!role) {
     redirect("/admin/login");
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <PanelShell role="developer">{children}</PanelShell>;
 }
