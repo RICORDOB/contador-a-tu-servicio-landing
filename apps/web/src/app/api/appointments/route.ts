@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { appendAppointment } from "@/lib/storage";
+import { notifyNewAppointment } from "@/lib/whatsapp";
 
 export async function POST(request: Request) {
   try {
@@ -17,9 +19,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const record = await appendAppointment({
+      guestName,
+      guestPhone,
+      serviceType: serviceType ?? "",
+      scheduledAt: scheduledAt ?? "",
+    });
+
+    // Notificación a la contadora. Nunca lanza: no afecta el registro de la cita.
+    await notifyNewAppointment(record);
+
     return NextResponse.json({
       ok: true,
       message: "Cita registrada correctamente",
+      id: record.id,
     });
   } catch {
     return NextResponse.json(

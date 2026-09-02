@@ -16,4 +16,7 @@ prisma/dev.db
 *~
 .DS_Store
 storage/uploads/
-.vercel/
+data/
+__pycache__/
+*.pyc
+.venv/

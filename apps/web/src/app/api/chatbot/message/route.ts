@@ -1,42 +1,63 @@
 import { NextResponse } from "next/server";
 
+const ADK_BACKEND_URL = process.env.ADK_BACKEND_URL;
+const ADK_API_KEY = process.env.ADK_API_KEY;
+const ADK_APP_PUBLIC = process.env.ADK_APP_PUBLIC || "anita_contadora";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { messages } = body as { messages: Array<{ role: string; text: string }> };
+    const { messages, sessionId } = body as {
+      messages: Array<{ role: string; text: string }>;
+      sessionId?: string;
+    };
 
-    if (!messages || !Array.isArray(messages)) {
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
         { text: "No entendí tu mensaje. Por favor escribe de nuevo." },
         { status: 400 }
       );
     }
 
-    const lastMessage = messages[messages.length - 1]?.text || "";
-    const lower = lastMessage.toLowerCase();
-
-    const faqs: Record<string, string> = {
-      servicios:
-        "Ofrecemos contabilidad integral, nómina, declaración de renta, asesoría DIAN, ICA y constitución de empresas.",
-      horarios: "Nuestro horario es de lunes a viernes, 8:00 AM a 6:00 PM.",
-      precios: "Los costos varían según el servicio y el volumen. Agenda una cita para recibir una cotización personalizada.",
-      ubicación: "Estamos ubicados en Turbo, Antioquia, Colombia.",
-      documentos: "Los clientes activos acceden a su portal para consultar RUT, Cámara de Comercio y declaraciones.",
-      automatización: "Ofrecemos alertas de vencimiento, gestión documental inteligente, flujo de citas automatizado y recordatorios de facturas.",
-      ia: "Estamos integrando asistentes de IA para consultas tributarias más rápidas y precisas.",
-      agendar: "Para agendar una cita necesito tu nombre, teléfono y servicio preferido.",
-    };
-
-    let response = "Para saber más sobre nuestros servicios, visita la sección de Servicios. Para agendar una cita escribe *agendar* o envíanos un correo a contacto@contadoratuservicio.com.";
-
-    for (const [keyword, answer] of Object.entries(faqs)) {
-      if (lower.includes(keyword)) {
-        response = answer;
-        break;
-      }
+    if (!ADK_BACKEND_URL) {
+      return NextResponse.json(
+        {
+          text: "El asistente está en mantenimiento. Escríbenos a contacto@contadoratuservicio.com",
+        },
+        { status: 503 }
+      );
     }
 
-    return NextResponse.json({ text: response });
+    const lastMessage = messages[messages.length - 1]?.text || "";
+
+    const res = await fetch(`${ADK_BACKEND_URL}/v1/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(ADK_API_KEY ? { "X-ADK-API-KEY": ADK_API_KEY } : {}),
+      },
+      body: JSON.stringify({
+        app_name: ADK_APP_PUBLIC,
+        message: lastMessage,
+        session_id: sessionId,
+      }),
+    });
+
+    if (!res.ok) {
+      const detail = await res.text();
+      console.error("[chatbot] ADK error", res.status, detail);
+      return NextResponse.json(
+        { text: "Hubo un problema con el asistente. Intenta de nuevo." },
+        { status: 502 }
+      );
+    }
+
+    const data = await res.json();
+
+    return NextResponse.json({
+      text: data.text || "No entendí. ¿Puedes repetirlo?",
+      sessionId: data.session_id,
+    });
   } catch {
     return NextResponse.json(
       { text: "Error de conexión. Intenta de nuevo." },

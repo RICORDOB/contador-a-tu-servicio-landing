@@ -11,6 +11,7 @@ services:
       - "5433:5432"
     volumes:
       - contador_pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
 volumes:
   contador_pg_data:

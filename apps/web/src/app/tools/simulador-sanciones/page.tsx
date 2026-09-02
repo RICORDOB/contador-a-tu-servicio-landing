@@ -1,11 +1,20 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import SancionesForm from "@/components/tools/SancionesForm";
 
-export const metadata = {
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+export const metadata: Metadata = {
   title: "Simulador de sanciones tributarias",
   description:
-    "Estima sanciones por extemporaneidad según el Estatuto Tributario colombiano.",
+    "Estima tu sanción por extemporaneidad según los Arts. 641–643 del Estatuto Tributario colombiano. Calculadora gratuita para comerciantes y empresas.",
+  alternates: { canonical: `${APP_URL.replace(/\/$/, "")}/tools/simulador-sanciones` },
+  openGraph: {
+    title: "Simulador de sanciones tributarias",
+    description:
+      "Calcula de forma gratuita tu sanción por declaración extemporánea según la normativa DIAN.",
+  },
 };
 
 export default function SimuladorSancionesPage() {

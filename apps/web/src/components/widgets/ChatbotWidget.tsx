@@ -37,6 +37,20 @@ export default function ChatbotWidget() {
     "name" | "phone" | "service" | "date" | "time" | "confirm" | "done" | null
   >(null);
   const pendingRef = useRef<Context>({});
+  const [sessionId, setSessionId] = useState("");
+
+  function getSessionId() {
+    if (sessionId) return sessionId;
+    const existing = localStorage.getItem("anita_session");
+    if (existing) {
+      setSessionId(existing);
+      return existing;
+    }
+    const fresh = crypto.randomUUID();
+    localStorage.setItem("anita_session", fresh);
+    setSessionId(fresh);
+    return fresh;
+  }
 
   function addBot(text: string) {
     setMessages((m) => [...m, { role: "model", text }]);
@@ -115,10 +129,14 @@ export default function ChatbotWidget() {
       const res = await fetch("/api/chatbot/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...messages, { role: "user", text }] }),
+        body: JSON.stringify({
+          messages: [...messages, { role: "user", text }],
+          sessionId: getSessionId(),
+        }),
       });
       const data = await res.json();
       addBot(data.text || "No entendí. ¿Puedes repetirlo?");
+      if (data.sessionId) setSessionId(data.sessionId);
     } catch {
       addBot("Error de conexión. Intenta de nuevo.");
     } finally {
