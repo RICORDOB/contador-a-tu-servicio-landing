@@ -64,16 +64,25 @@ async def chat(body: ChatRequest, x_adk_api_key: str | None = Header(default=Non
 
   content = types.Content(role="user", parts=[types.Part(text=body.message)])
 
-  texts: list[str] = []
-  async for event in runner.run(
-    user_id=user_id,
-    session_id=session_id,
-    new_message=content,
-  ):
-    if event.is_final_response():
-      for part in event.content.parts:
-        if part.text:
-          texts.append(part.text)
+  try:
+    texts: list[str] = []
+    # ADK 2.x: runner.run() es un generador SÍNCRONO; se itera con `for`.
+    for event in runner.run(
+      user_id=user_id,
+      session_id=session_id,
+      new_message=content,
+    ):
+      if event.is_final_response():
+        for part in event.content.parts:
+          if part.text:
+            texts.append(part.text)
+  except Exception as exc:  # noqa: BLE001
+    # El detalle se loguea y se devuelve de forma segura para diagnosticar
+    # (permisos, allowlist de modelos, etc.).
+    import traceback
+
+    traceback.print_exc()
+    raise HTTPException(status_code=500, detail=f"Error del agente: {exc}")
 
   if not texts:
     raise HTTPException(status_code=500, detail="El agente no produjo una respuesta")
