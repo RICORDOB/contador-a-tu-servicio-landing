@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import { SectionProvider } from "./SectionProvider";
 import ChatbotWidget from "@/components/widgets/ChatbotWidget";
 import WhatsAppFloat from "@/components/widgets/WhatsAppFloat";
 
@@ -15,12 +16,12 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   }
 
   return (
-    <>
+    <SectionProvider>
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
       <ChatbotWidget />
       <WhatsAppFloat />
-    </>
+    </SectionProvider>
   );
 }
