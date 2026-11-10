@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { ArrowRight, Calculator, CalendarDays, Scale, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Calculator, CalendarDays, Scale, CheckCircle2, Wallet } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import AnimatedCalculator from "@/components/ui/AnimatedCalculator";
 
 const points = [
   "Sanciones por extemporaneidad según el Estatuto Tributario",
   "Fechas DIAN según los dos últimos dígitos de tu NIT",
+  "Liquidación laboral: cesantías, prima, vacaciones e indemnización",
   "Cálculos referenciales con UVT y tarifas vigentes",
 ];
 
@@ -94,6 +95,10 @@ export default function CalculatorSection() {
                 <Link href="/tools/calendario-dian" className="btn-navy px-6 py-3.5 text-sm">
                   <CalendarDays size={16} />
                   Ver calendario DIAN
+                </Link>
+                <Link href="/tools/liquidacion-laboral" className="btn-primary px-6 py-3.5 text-sm">
+                  <Wallet size={16} />
+                  Liquidación laboral
                 </Link>
               </div>
             </Reveal>

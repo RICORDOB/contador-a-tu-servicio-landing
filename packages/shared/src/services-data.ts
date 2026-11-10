@@ -67,4 +67,12 @@ export const TOOLS = [
     href: "/tools/calendario-dian",
     status: "live" as const,
   },
+  {
+    id: "liquidacion-laboral",
+    title: "Liquidación laboral",
+    description:
+      "Calcula cesantías, intereses, prima, vacaciones e indemnización de un contrato, con el salario mínimo de cada año.",
+    href: "/tools/liquidacion-laboral",
+    status: "live" as const,
+  },
 ];

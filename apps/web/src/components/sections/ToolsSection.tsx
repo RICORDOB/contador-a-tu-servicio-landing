@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Scale, Sparkles, Wrench } from "lucide-react";
+import { ArrowRight, CalendarDays, Scale, Sparkles, Wrench, Wallet } from "lucide-react";
 import { TOOLS } from "@contador/shared";
 import Reveal from "@/components/ui/Reveal";
 import AnimatedChart from "@/components/ui/AnimatedChart";
@@ -7,6 +7,7 @@ import AnimatedChart from "@/components/ui/AnimatedChart";
 const toolIcons = {
   "simulador-sanciones": Scale,
   "calendario-dian": CalendarDays,
+  "liquidacion-laboral": Wallet,
 };
 
 export default function ToolsSection() {
