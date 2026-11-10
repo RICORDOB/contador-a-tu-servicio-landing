@@ -10,9 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: amondnet/vercel-action@v25
+
+      - uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+          node-version: "22"
+
+      # La app es un monorepo (apps/web + packages/shared). Vercel está configurado
+      # con Root Directory "." y solo recibe apps/web, así que construimos una copia
+      # autocontenida con @contador/shared inlineado en src/lib/shared.
+      - name: Build self-contained staging
+        run: |
+          set -e
+          mkdir -p .deploy
+          cp -r apps/web/. .deploy/
+          rm -rf .deploy/node_modules .deploy/.next .deploy/dist
+          mkdir -p .deploy/src/lib/shared
+          cp -r packages/shared/src/. .deploy/src/lib/shared/
+          rm -rf .deploy/src/lib/shared/__tests__
+          sed -i '/"@contador\/shared": "\*",/d' .deploy/package.json
+          sed -i 's#"../../packages/shared/src/index.ts"#"./src/lib/shared/index.ts"#' .deploy/tsconfig.json
+
+      - name: Deploy to Vercel (production)
+        run: |
+          cd .deploy
+          npx --yes vercel@latest link --yes --token "${{ secrets.VERCEL_TOKEN }}" --team ricardo-dev2 --project contador-a-tu-servicio
+          npx --yes vercel@latest deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"
